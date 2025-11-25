@@ -1,0 +1,29 @@
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Node modules (future tooling)
+node_modules/
+
+# Composer vendor directories
+vendor/
+
+# Logs
+*.log
+debug.log
+
+# IDE / editor settings
+.vscode/
+.idea/
+
+# Mac Finder
+__MACOSX/
+
+# Temporary files
+*.tmp
+*.cache
+*.swp
+*.swo
+
+# Zips created for deployment
+*.zip

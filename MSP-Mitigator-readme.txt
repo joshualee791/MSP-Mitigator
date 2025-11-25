@@ -1,11 +1,11 @@
-=== Main WP Rankmath Noindex ===
+=== MSP Malware Mitigator ===
 Contributors: Joshua Garza
 Tags: Security
 Requires at least: 5.0
 Tested up to: 6.6.1
 Requires PHP: 7.4
-Stable tag: .3
-License: GPLv2 or later
+Stable tag: 0.5
+License: MIT
 License URI: https://mysocialpractice.com
 Render certain malware payloads inert
 

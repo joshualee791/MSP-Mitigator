@@ -2,7 +2,7 @@
 /*
 Plugin Name: MSP Malware Mitigator
 Description: Neutralizes known malicious plugins across MSP sites by stubbing or wiping their files, deactivating them, and forcing them visible in the Plugins list.
-Version: 0.3
+Version: 0.5
 Author: Joshua Garza, MSP WebOps
 */
 
