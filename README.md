@@ -50,7 +50,7 @@ This plugin is ideal for:
 - Agencies and WebOps teams managing 50–500+ WordPress sites  
 - Situations where a malware outbreak appears across multiple customer sites  
 - Environments where manual cleaning is too slow or too risky  
-- MainWP or similar remote management ecosystems  
+- MainWP, ManageWP, or similar remote management ecosystems  
 - Incidents where speed, safety, and stability matter more than forensic perfection  
 
 If you're handling a distributed infection across many small WordPress installs, this plugin buys you time.
@@ -70,77 +70,102 @@ If you're handling a distributed infection across many small WordPress installs,
    - Visiting `/wp-admin/` on each site  
    - Or letting MainWP’s sync/health checks trigger it automatically  
 
+On first run, the plugin will neutralize matching malware families portfolio-wide.
+
 ---
 
 ## 🔍 Profiles & Signatures
 
-Each malware profile in `$malware_profiles` contains:
+Malware detection is driven by the `$malware_profiles` array, where each profile contains something like:
 
-```
-plugin_file   → the plugin’s main file
-file_targets  → specific absolute paths to inspect
-signatures    → malware-specific strings to match
+```php
+[
+    'plugin_file'  => 'slug/main-file.php',
+    'file_targets' => [
+        // Absolute paths from ABSPATH to inspect/neutralize
+    ],
+    'signatures'   => [
+        // Malware-specific strings to match
+    ],
+]
 ```
 
-You can add new malware families by extending this array.
+You can add new malware families by extending this array with additional profiles.
 
 ---
 
 ## 🪓 Neutralization Process
 
-For every infected file:
+For every infected file that matches at least **two** signatures:
 
-**PHP files** are replaced with a stub:
+### PHP files  
+are replaced with a safe stub:
 
-<?php  
-// Neutralized malicious file…  
+```php
+<?php
+/**
+ * Neutralized malicious file...
+ */
 return;
+```
 
-**JSON and other files** are replaced with empty content.
+### Non-PHP files (JSON, assets, misc)  
+are replaced with empty content.
 
-After the **first confirmed match**, the plugin recursively neutralizes *the entire plugin directory*, replacing:
+### After the first confirmed match for a profile
 
-- all `.php` files with stubs  
-- all other files with empty files  
+Once one file is confirmed as malware for a given profile, the plugin:
 
-The malicious plugin folder remains visible so it can be deleted safely.
+- Recursively walks the entire plugin directory for that profile.  
+- Replaces **all** `.php` files with neutral stubs.  
+- Blanks out all non-PHP files.  
+
+The plugin folder is left in place so you can review it and then delete it safely via the WordPress admin or MainWP.
 
 ---
 
 ## 🧪 Logging (Optional)
 
-Enable debug logging by adding to `wp-config.php`:
+To enable logging, add the following to `wp-config.php`:
 
-define('WP_DEBUG_LOG', true);  
+```php
 define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+```
 
-Neutralization logs will appear at:
+Neutralization logs will then appear in:
 
-`wp-content/debug.log`
+```text
+wp-content/debug.log
+```
 
-Example:
+Example log entries:
 
-[MSP Malware Mitigator] Neutralized file (either-interoperable-blob): includes/actual-resource.php  
-[MSP Malware Mitigator] Recursively neutralized file (some-validated-workflow): vendor/.../likely.php  
-[MSP Malware Mitigator] Deactivated plugin (either-interoperable-blob)
+```text
+[MSP Malware Mitigator] Neutralized file (either-interoperable-blob): includes/actual-resource.php
+[MSP Malware Mitigator] Recursively neutralized file (some-validated-workflow): vendor/.../likely.php
+[MSP Malware Mitigator] Deactivated plugin (either-interoperable-blob): either-interoperable-blob/either-interoperable-blob.php
+```
 
 ---
 
 ## 🧼 After Neutralization
 
-After the plugin runs across your portfolio:
+After the plugin has run across your portfolio:
 
-1. Review a few sites for confirmation  
-2. Delete the neutralized malware plugin folders  
-3. Rotate any potentially compromised credentials  
-4. Run Wordfence or similar to verify no active payload remains  
-5. Remove this mitigator plugin once cleanup is complete  
+1. Review a few representative sites to confirm neutralization.  
+2. Delete the neutralized malware plugin folders entirely.  
+3. Rotate any potentially compromised credentials (WP admin, SFTP/SSH, etc.).  
+4. Run Wordfence or a similar scanner to verify no active payload remains.  
+5. Remove the MSP Malware Mitigator plugin once cleanup is complete.  
+
+This plugin is an incident-response tool, not a permanent fixture.
 
 ---
 
 ## 🛡️ Disclaimer
 
-This plugin is intended strictly for defensive use in environments you administer.  
+This plugin is intended strictly for **defensive use** in environments you administer.  
 It does not exploit vulnerabilities or modify unrelated files.  
 Use responsibly.
 
