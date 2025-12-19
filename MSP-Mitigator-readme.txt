@@ -15,5 +15,7 @@ Render certain malware payloads inert
 
 == Changelog ==
 
+= MSP Mitigator 0.6 - 2025-12-19 =
+* Fixed: Added new signatures
 = MSP Mitigator 0.3 - 2025-11-25 =
 * Fixed: Internal release
